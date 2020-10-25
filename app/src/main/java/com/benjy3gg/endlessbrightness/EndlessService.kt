@@ -18,6 +18,7 @@ class EndlessService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
     private lateinit var mContext: Context;
+    private var timer: Long = 1 * 60 * 1000;
 
     override fun onBind(intent: Intent): IBinder? {
         log("Some component want to bind with the service")
@@ -78,12 +79,13 @@ class EndlessService : Service() {
         setServiceState(this, ServiceState.STARTED)
 
         // we need this lock so our service gets not affected by Doze Mode
-        wakeLock =
+        /*wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "EndlessService::lock").apply {
                     acquire()
                 }
             }
+         */
 
 
         // we're starting a loop in a coroutine
@@ -92,7 +94,7 @@ class EndlessService : Service() {
                 launch(Dispatchers.IO) {
                     setBrightness(0);
                 }
-                delay(5000)
+                delay(timer)
             }
             log("End of the loop for the service")
         }
@@ -102,11 +104,11 @@ class EndlessService : Service() {
         log("Stopping the foreground service")
         Toast.makeText(this, "Service stopping", Toast.LENGTH_SHORT).show()
         try {
-            wakeLock?.let {
+            /*wakeLock?.let {
                 if (it.isHeld) {
                     it.release()
                 }
-            }
+            }*/
             setBrightness(255);
             stopForeground(true)
             stopSelf()
