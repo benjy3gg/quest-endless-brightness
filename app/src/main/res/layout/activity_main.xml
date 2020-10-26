@@ -1,31 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
     <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_height="match_parent">
 
-        <Button
-                android:id="@+id/btnStartService"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Brightness 0"
-                android:paddingTop="20dp"
-                android:layout_marginTop="20dp" />
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                tools:text="This is Black">
 
-        <Button
-                android:id="@+id/btnStopService"
+            <Button
+                    android:id="@+id/btnStartService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Brightness 0"
+                    android:paddingTop="20dp"
+                    android:layout_marginTop="20dp" />
+
+            <Button
+                    android:id="@+id/btnStopService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Revert" />
+
+            <Button
+                    android:id="@+id/btnClose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Save" />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Brightness Auto" />
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:src="@drawable/blacktest"
+                    android:layout_width="565dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="false"
+                    android:cropToPadding="false"
+                    android:background="#000000" />
+
+            <SeekBar
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:max="4"
+                    android:progress="4"
+                    android:id="@+id/seekBar"
+                    android:layout_weight="1" />
+        </LinearLayout>
 
     </LinearLayout>
 

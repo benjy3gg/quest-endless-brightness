@@ -9,8 +9,10 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import kotlinx.coroutines.*
+import kotlin.math.roundToInt
 
 
 class EndlessService : Service() {
@@ -19,6 +21,7 @@ class EndlessService : Service() {
     private var isServiceStarted = false
     private lateinit var mContext: Context;
     private var timer: Long = 1 * 60 * 1000;
+    private var brightness: Int = 0;
 
     override fun onBind(intent: Intent): IBinder? {
         log("Some component want to bind with the service")
@@ -29,8 +32,11 @@ class EndlessService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         log("onStartCommand executed with startId: $startId")
         if (intent != null) {
+            Log.d("INTENT", intent.extras.toString())
             val action = intent.action
+            brightness = intent.getIntExtra("brightness", 255)
             log("using an intent with action $action")
+            log("using an intent with brightness $brightness")
             when (action) {
                 Actions.START.name -> startService()
                 Actions.STOP.name -> stopService()
@@ -42,6 +48,9 @@ class EndlessService : Service() {
             )
         }
         // by returning this we make sure the service is restarted if the system kills the service
+        log("The service has been created".toUpperCase())
+        val notification = createNotification()
+        startForeground(1, notification)
         return START_STICKY
     }
 
@@ -49,10 +58,6 @@ class EndlessService : Service() {
         super.onCreate()
 
         mContext = this;
-
-        log("The service has been created".toUpperCase())
-        val notification = createNotification()
-        startForeground(1, notification)
     }
 
     override fun onDestroy() {
@@ -92,7 +97,7 @@ class EndlessService : Service() {
         GlobalScope.launch(Dispatchers.IO) {
             while (isServiceStarted) {
                 launch(Dispatchers.IO) {
-                    setBrightness(0);
+                    setBrightness(brightness);
                 }
                 delay(timer)
             }
@@ -120,6 +125,8 @@ class EndlessService : Service() {
     }
 
     private fun setBrightness(brightness: Int) {
+
+        Log.d("BRIGHNTESS_SET", brightness.toString())
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.System.canWrite(getApplicationContext())) {
@@ -162,12 +169,12 @@ class EndlessService : Service() {
             notificationChannelId
         ) else Notification.Builder(this)
 
-        val cResolver = this.getApplicationContext().getContentResolver();
-        val brightness = Settings.System.getInt(cResolver, Settings.System.SCREEN_BRIGHTNESS);
 
+
+        val brightnessValue = (brightness/255.0 * 100).roundToInt()
         return builder
             .setContentTitle("Endless Brightness")
-            .setContentText("Brightness: 0")
+            .setContentText("Brightness: $brightnessValue%")
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker("Ticker text")
